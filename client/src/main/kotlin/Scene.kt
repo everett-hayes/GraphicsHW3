@@ -34,6 +34,9 @@ class Scene (
   val asteroidMaterial = Material(texturedProgram).apply{
     this["colorTexture"]?.set(Texture2D(gl, "media/asteroid.png"))
   }
+  val ufoMaterial = Material(texturedProgram).apply{
+    this["colorTexture"]?.set(Texture2D(gl, "media/ufo.png"))
+  }
 
   val texturedQuadGeometry = TexturedQuadGeometry(gl)
   val backgroundMesh = Mesh(backgroundMaterial, texturedQuadGeometry)
@@ -41,6 +44,7 @@ class Scene (
   val thrusterMesh = Mesh(thrusterMaterial, texturedQuadGeometry)
   val laserMesh = Mesh(laserMaterial, texturedQuadGeometry)
   val asteroidMesh = Mesh(asteroidMaterial, texturedQuadGeometry)
+  val ufoMesh = Mesh(ufoMaterial, texturedQuadGeometry)
 
   val camera = OrthoCamera(*Program.all).apply {
     position.set(1f, 1f)
@@ -66,6 +70,24 @@ class Scene (
   }
 
   val asteroid = object : GameObject(asteroidMesh) {
+
+    override fun move (
+      dt : Float,
+      t : Float,
+      keysPressed : Set<String>,
+      gameObjects : List<GameObject>
+    ) : Boolean {
+
+      var drag : Float = 0.3f;
+      velocity = velocity * exp(-drag * dt);
+      
+      position += velocity * dt;
+      
+      return true;
+    }
+  }
+
+  val ufo = object : GameObject(ufoMesh) {
 
     override fun move (
       dt : Float,
@@ -154,6 +176,10 @@ class Scene (
     gameObjects += asteroid.apply {
       id = "asteroid1"
       position.set(-2f, -2f)
+    }
+    gameObjects += ufo.apply {
+      id = "ufo1"
+      position.set(2f, 2f)
     }
   }
 
